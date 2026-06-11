@@ -6,6 +6,7 @@ import {
 } from "./returns";
 import {
   computeAvgYearlyGrowth,
+  crownBadgeDescription,
   hasCrownBadge,
   passesGrowthFilters,
   type FilterState,
@@ -92,6 +93,8 @@ export function renderTable(
     th(PERIOD_LABELS[k], k, sort),
   ).join("");
 
+  const crownTitle = escapeHtml(crownBadgeDescription(filterState));
+
   const body = displayRows
     .map((row) => {
       const avgGrowth = computeAvgYearlyGrowth(
@@ -111,7 +114,7 @@ export function renderTable(
           : "—";
 
       const crown = hasCrownBadge(row, filterState)
-        ? '<td class="crown" aria-label="Meets growth threshold in all periods">👑</td>'
+        ? `<td class="crown" title="${crownTitle}" aria-label="${crownTitle}">👑</td>`
         : '<td class="crown"></td>';
 
       return `<tr>
@@ -131,7 +134,7 @@ export function renderTable(
       <table>
         <thead>
           <tr>
-            <th class="crown" aria-hidden="true"></th>
+            <th class="crown" title="${crownTitle}" aria-label="Crown: meets growth in all periods">👑</th>
             ${th("Symbol", "symbol", sort)}
             ${th("Name", "name", sort)}
             ${th("Sector", "sector", sort)}

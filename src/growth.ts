@@ -69,3 +69,8 @@ export function periodRangeLabel(rangeStart: number, rangeEnd: number): string {
   const end = Math.max(rangeStart, rangeEnd);
   return `${GROWTH_PERIODS[start].label} – ${GROWTH_PERIODS[end].label}`;
 }
+
+export function crownBadgeDescription(state: FilterState): string {
+  const range = periodRangeLabel(state.periodStart, state.periodEnd);
+  return `Annualized growth ≥ ${state.minGrowth}% in every period (${range})`;
+}
