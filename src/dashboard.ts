@@ -110,7 +110,7 @@ export function renderTable(
 
       const price =
         row.price !== null
-          ? row.price.toLocaleString(undefined, { maximumFractionDigits: 4 })
+          ? Math.round(row.price).toLocaleString()
           : "—";
 
       const crown = hasCrownBadge(row, filterState)

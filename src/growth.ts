@@ -46,7 +46,7 @@ export function computeAvgYearlyGrowth(
   }
   if (values.length === 0) return null;
   const sum = values.reduce((a, b) => a + b, 0);
-  return Math.round((sum / values.length) * 100) / 100;
+  return Math.round(sum / values.length);
 }
 
 export function passesGrowthFilters(row: SymbolRow, state: FilterState): boolean {

@@ -38,7 +38,7 @@ export interface PricePoint {
 
 function pctReturn(current: number, past: number): number | null {
   if (past === 0) return null;
-  return Math.round((current / past - 1) * 10000) / 100;
+  return Math.round((current / past - 1) * 100);
 }
 
 function closeOnOrBefore(series: PricePoint[], target: Date): number | null {
@@ -119,15 +119,16 @@ export function computeReturns(
 
 export function formatReturn(value: number | null): string {
   if (value === null) return "—";
-  const sign = value >= 0 ? "+" : "";
-  const absVal = Math.abs(value);
+  const rounded = Math.round(value);
+  const sign = rounded >= 0 ? "+" : "";
+  const absVal = Math.abs(rounded);
   if (absVal >= 1000) {
     if (absVal >= 1_000_000) {
-      return `${sign}${(value / 1_000_000).toFixed(2)}M%`;
+      return `${sign}${Math.round(rounded / 1_000_000)}M%`;
     }
-    return `${sign}${(value / 1000).toFixed(2)}K%`;
+    return `${sign}${Math.round(rounded / 1000)}K%`;
   }
-  return `${sign}${value.toFixed(2)}%`;
+  return `${sign}${rounded}%`;
 }
 
 export function returnsHash(
