@@ -6,6 +6,7 @@ import {
 } from "./returns";
 import {
   computeAvgYearlyGrowth,
+  hasCrownBadge,
   passesGrowthFilters,
   type FilterState,
 } from "./growth";
@@ -109,7 +110,12 @@ export function renderTable(
           ? row.price.toLocaleString(undefined, { maximumFractionDigits: 4 })
           : "—";
 
+      const crown = hasCrownBadge(row, filterState)
+        ? '<td class="crown" aria-label="Meets growth threshold in all periods">👑</td>'
+        : '<td class="crown"></td>';
+
       return `<tr>
+        ${crown}
         <td class="sym">${escapeHtml(row.symbol)}</td>
         <td class="name">${escapeHtml(row.name)}</td>
         <td>${escapeHtml(row.sector ?? "—")}</td>
@@ -125,6 +131,7 @@ export function renderTable(
       <table>
         <thead>
           <tr>
+            <th class="crown" aria-hidden="true"></th>
             ${th("Symbol", "symbol", sort)}
             ${th("Name", "name", sort)}
             ${th("Sector", "sector", sort)}
@@ -133,7 +140,7 @@ export function renderTable(
             ${returnHeaders}
           </tr>
         </thead>
-        <tbody>${body || '<tr><td colspan="20" class="empty">No symbols match filters</td></tr>'}</tbody>
+        <tbody>${body || '<tr><td colspan="21" class="empty">No symbols match filters</td></tr>'}</tbody>
       </table>
     </div>`;
 }

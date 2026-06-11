@@ -55,6 +55,15 @@ export function passesGrowthFilters(row: SymbolRow, state: FilterState): boolean
   return true;
 }
 
+export function hasCrownBadge(row: SymbolRow, state: FilterState): boolean {
+  for (const period of periodsInRange(state.periodStart, state.periodEnd)) {
+    const raw = row.returns[period.key as PeriodKey];
+    if (raw === null) return false;
+    if (period.annualize(raw) < state.minGrowth) return false;
+  }
+  return true;
+}
+
 export function periodRangeLabel(rangeStart: number, rangeEnd: number): string {
   const start = Math.min(rangeStart, rangeEnd);
   const end = Math.max(rangeStart, rangeEnd);

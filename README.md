@@ -60,6 +60,8 @@ All symbols are shown in one table. Two filters control which rows appear:
 
 2. **Period range** — dual slider over 3M, 6M, 1Y, 3Y, 5Y, 10Y. Defines which periods feed into the average.
 
+Rows with a crown (👑) meet the min growth threshold in **every** period in the selected range (each period’s annualized return individually, not just the average).
+
 ### Annualization formula
 
 | Period | Yearly equivalent |

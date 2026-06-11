@@ -214,11 +214,19 @@ td {
   text-align: right;
 }
 
-th:first-child,
-td:first-child,
 th:nth-child(2),
-td:nth-child(2) {
+td:nth-child(2),
+th:nth-child(3),
+td:nth-child(3) {
   text-align: left;
+}
+
+td.crown,
+th.crown {
+  width: 1.5rem;
+  text-align: center;
+  padding-left: 0.4rem;
+  padding-right: 0.2rem;
 }
 
 th {
