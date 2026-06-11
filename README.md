@@ -52,24 +52,34 @@ Universe symbols are built from CSV files in [`data/`](data/) (S&P 500 fallback,
 
 If your repo name differs from `investor-dashboard-site`, update `base` in [`vite.config.ts`](vite.config.ts).
 
-## Dashboard sections
+## Growth filters
 
-| Tab | Description |
-|-----|-------------|
-| All symbols | Full universe, sorted by 1Y return |
-| Stocks | US/EU/PL stocks |
-| ETFs | All ETFs |
-| UCITS ETFs | EU-listed ETFs |
-| Poland WIG20 | GPW stocks |
-| EU stocks | European large caps |
-| VWRA holdings | Top VWRA.L constituents |
-| Top / Bottom 1D movers | Daily stock movers (25 each) |
+All symbols are shown in one table. Three filters control which rows appear:
 
-Click column headers to sort. Data is cached in IndexedDB for 1 hour.
+1. **Min avg yearly growth** — single slider (-50% to +100%). Shows symbols whose average annualized growth is at or above the threshold.
+
+2. **Period range** — dual slider over 3M, 6M, 1Y, 3Y, 5Y, 10Y. Defines which periods feed into the average.
+
+3. **Positive growth only (from 3M)** — when checked, every included period in the range must have a positive return.
+
+### Annualization formula
+
+| Period | Yearly equivalent |
+|--------|-------------------|
+| 3M | return × 4 |
+| 6M | return × 2 |
+| 1Y | return |
+| 3Y | return ÷ 3 |
+| 5Y | return ÷ 5 |
+| 10Y | return ÷ 10 |
+
+Average yearly growth = mean of annualized values for periods in the selected range (null periods are skipped).
+
+Click column headers to sort. Default sort is Avg Yr Growth descending. Data is cached in IndexedDB for 1 hour when using live refresh.
 
 ## Full universe refresh
 
-~618 symbols are fetched in chunks of 45 with 1.5s delay between chunks (~25–35 min for a full refresh). The active tab loads first; remaining symbols prefetch in the background.
+~618 symbols are fetched in chunks of 45 with 1.5s delay between chunks (~25–35 min for a full refresh).
 
 ## Related project
 

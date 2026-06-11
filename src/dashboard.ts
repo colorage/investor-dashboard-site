@@ -5,35 +5,50 @@ import {
   type PeriodKey,
 } from "./returns";
 import {
-  SECTIONS,
-  type SectionDef,
-  type SectionId,
-  type SymbolRow,
-} from "./universe";
+  computeAvgYearlyGrowth,
+  passesGrowthFilters,
+  type FilterState,
+} from "./growth";
+import type { SymbolRow } from "./universe";
 
-export type SortKey = PeriodKey | "price" | "symbol" | "name" | "sector" | "market" | "exchange";
+export type SortKey =
+  | PeriodKey
+  | "price"
+  | "symbol"
+  | "name"
+  | "sector"
+  | "avgGrowth";
 
 export interface SortState {
   key: SortKey;
   dir: "asc" | "desc";
 }
 
-function getCellValue(row: SymbolRow, key: SortKey): string | number | null {
+function getCellValue(
+  row: SymbolRow,
+  key: SortKey,
+  filterState: FilterState,
+): string | number | null {
+  if (key === "avgGrowth") {
+    return computeAvgYearlyGrowth(row, filterState.periodStart, filterState.periodEnd);
+  }
   if (key in row.returns) return row.returns[key as PeriodKey];
   if (key === "price") return row.price;
   if (key === "symbol") return row.symbol;
   if (key === "name") return row.name;
   if (key === "sector") return row.sector ?? "";
-  if (key === "market") return row.market;
-  if (key === "exchange") return row.exchange ?? "";
   return null;
 }
 
-export function sortRows(rows: SymbolRow[], sort: SortState): SymbolRow[] {
+export function sortRows(
+  rows: SymbolRow[],
+  sort: SortState,
+  filterState: FilterState,
+): SymbolRow[] {
   const sorted = [...rows];
   sorted.sort((a, b) => {
-    const av = getCellValue(a, sort.key);
-    const bv = getCellValue(b, sort.key);
+    const av = getCellValue(a, sort.key, filterState);
+    const bv = getCellValue(b, sort.key, filterState);
     if (av === null && bv === null) return 0;
     if (av === null) return 1;
     if (bv === null) return -1;
@@ -46,21 +61,6 @@ export function sortRows(rows: SymbolRow[], sort: SortState): SymbolRow[] {
     return sort.dir === "asc" ? cmp : -cmp;
   });
   return sorted;
-}
-
-export function filterSectionRows(
-  rows: SymbolRow[],
-  section: SectionDef,
-): SymbolRow[] {
-  let filtered = rows.filter((r) => section.filter(r) && !r.failed);
-  filtered = sortRows(filtered, {
-    key: section.defaultSort.key as SortKey,
-    dir: section.defaultSort.dir,
-  });
-  if (section.limit) {
-    filtered = filtered.slice(0, section.limit);
-  }
-  return filtered;
 }
 
 function returnClass(value: number | null): string {
@@ -78,21 +78,14 @@ function th(label: string, key: SortKey, sort: SortState): string {
 
 export function renderTable(
   rows: SymbolRow[],
-  section: SectionDef,
   sort: SortState,
+  filterState: FilterState,
 ): string {
-  let displayRows = sortRows(
-    rows.filter((r) => section.filter(r) && !r.failed),
+  const displayRows = sortRows(
+    rows.filter((r) => !r.failed && passesGrowthFilters(r, filterState)),
     sort,
+    filterState,
   );
-  if (section.limit) {
-    displayRows = displayRows.slice(0, section.limit);
-  }
-
-  const extraHeaders: string[] = [];
-  if (section.columns.includes("sector")) extraHeaders.push(th("Sector", "sector", sort));
-  if (section.columns.includes("market")) extraHeaders.push(th("Market", "market", sort));
-  if (section.columns.includes("exchange")) extraHeaders.push(th("Exchange", "exchange", sort));
 
   const returnHeaders = PERIOD_KEYS.map((k) =>
     th(PERIOD_LABELS[k], k, sort),
@@ -100,16 +93,11 @@ export function renderTable(
 
   const body = displayRows
     .map((row) => {
-      const extras: string[] = [];
-      if (section.columns.includes("sector")) {
-        extras.push(`<td>${escapeHtml(row.sector ?? "—")}</td>`);
-      }
-      if (section.columns.includes("market")) {
-        extras.push(`<td>${escapeHtml(row.market)}</td>`);
-      }
-      if (section.columns.includes("exchange")) {
-        extras.push(`<td>${escapeHtml(row.exchange ?? "—")}</td>`);
-      }
+      const avgGrowth = computeAvgYearlyGrowth(
+        row,
+        filterState.periodStart,
+        filterState.periodEnd,
+      );
 
       const returns = PERIOD_KEYS.map((k) => {
         const val = row.returns[k];
@@ -124,30 +112,28 @@ export function renderTable(
       return `<tr>
         <td class="sym">${escapeHtml(row.symbol)}</td>
         <td class="name">${escapeHtml(row.name)}</td>
-        ${extras.join("")}
+        <td>${escapeHtml(row.sector ?? "—")}</td>
         <td class="price">${price}</td>
+        <td class="${returnClass(avgGrowth)}">${formatReturn(avgGrowth)}</td>
         ${returns}
       </tr>`;
     })
     .join("");
 
-  const limited = section.limit
-    ? `<p class="section-note">Showing top ${section.limit} by ${PERIOD_LABELS[section.defaultSort.key as PeriodKey] ?? section.defaultSort.key}</p>`
-    : `<p class="section-note">${displayRows.length} symbols</p>`;
-
-  return `${limited}
+  return `<p class="section-note">${displayRows.length} symbols</p>
     <div class="table-scroll">
       <table>
         <thead>
           <tr>
             ${th("Symbol", "symbol", sort)}
             ${th("Name", "name", sort)}
-            ${extraHeaders.join("")}
+            ${th("Sector", "sector", sort)}
             ${th("Price", "price", sort)}
+            ${th("Avg Yr Growth", "avgGrowth", sort)}
             ${returnHeaders}
           </tr>
         </thead>
-        <tbody>${body || '<tr><td colspan="20" class="empty">No data yet — fetching quotes…</td></tr>'}</tbody>
+        <tbody>${body || '<tr><td colspan="20" class="empty">No symbols match filters</td></tr>'}</tbody>
       </table>
     </div>`;
 }
@@ -159,12 +145,3 @@ function escapeHtml(text: string): string {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
 }
-
-export function renderTabs(activeId: SectionId): string {
-  return SECTIONS.map(
-    (s) =>
-      `<button type="button" role="tab" class="tab${s.id === activeId ? " active" : ""}" data-section="${s.id}" aria-selected="${s.id === activeId}">${s.label}</button>`,
-  ).join("");
-}
-
-export { SECTIONS };
