@@ -1,48 +1,89 @@
-# Custom domain: siaroza.com/invest
+# Custom domain: siaroza.com/invest (without Vercel)
 
-`siaroza.com` DNS (GoDaddy) already points to **Vercel**. Path routing is configured in **Vercel**, not GoDaddy.
+## Current DNS (GoDaddy)
 
-## GoDaddy
+| Host | Type | Current value | Action |
+|------|------|---------------|--------|
+| `@` | A | `76.76.21.21` (Vercel) | **Remove or replace** — you no longer use Vercel |
+| `www` | CNAME | `cname.super.so` | Keep if your site is on Super.so |
 
-**No changes needed** for `/invest`. Keep existing records:
+GoDaddy cannot route a **path** like `/invest` by DNS alone. You need either a **subdomain** or a **proxy** (e.g. Cloudflare).
 
-| Host | Type | Value |
-|------|------|-------|
-| `@` | A | `76.76.21.21` (Vercel) |
-| `www` | CNAME | your existing target (e.g. Super.so) |
+---
 
-Do **not** add a CNAME for `/invest` — DNS has no path concept.
+## Option A — Easiest: `invest.siaroza.com` (GoDaddy only)
 
-## Vercel (siaroza.com project)
+No Vercel, no Cloudflare. Works with GitHub Pages directly.
 
-In the Vercel project that owns `siaroza.com`, add `vercel.json`:
+### GoDaddy → DNS → Add record
 
-```json
-{
-  "rewrites": [
-    {
-      "source": "/invest",
-      "destination": "https://colorage.github.io/investor-dashboard-site/index.html"
-    },
-    {
-      "source": "/invest/",
-      "destination": "https://colorage.github.io/investor-dashboard-site/index.html"
-    },
-    {
-      "source": "/invest/:path*",
-      "destination": "https://colorage.github.io/investor-dashboard-site/:path*"
-    }
-  ]
-}
-```
+| Type | Name | Value | TTL |
+|------|------|-------|-----|
+| **CNAME** | `invest` | `colorage.github.io` | 1 hour |
 
-Redeploy the Vercel project after adding this file.
+### GitHub
 
-If `siaroza.com` currently shows a Vercel 404, attach any project to the domain first (even a minimal repo), then add the rewrites.
+Repo **Settings → Pages → Custom domain:** `invest.siaroza.com` → Save → Enforce HTTPS
 
-## Dashboard repo
+### Dashboard repo
 
-This site is built with `base: "/invest/"` so assets load from `siaroza.com/invest/assets/...`.
+Set `vite.config.ts` `base` to `'/'` (not `/invest/`).
 
-GitHub Pages URL (origin): https://colorage.github.io/investor-dashboard-site/  
-Public URL (after Vercel rewrites): https://siaroza.com/invest/
+**Result:** https://invest.siaroza.com
+
+---
+
+## Option B — Keep `siaroza.com/invest` (needs Cloudflare)
+
+Use this if the URL must stay `siaroza.com/invest`.
+
+### 1. GoDaddy — point domain to Cloudflare
+
+- Create free account at [cloudflare.com](https://cloudflare.com)
+- Add site `siaroza.com`
+- Cloudflare gives you two nameservers (e.g. `ada.ns.cloudflare.com`)
+- GoDaddy → **Domain → Nameservers → Change → Custom** → paste Cloudflare NS
+
+### 2. Cloudflare DNS
+
+| Type | Name | Content | Proxy |
+|------|------|---------|-------|
+| CNAME | `www` | `cname.super.so` | DNS only (grey cloud) if Super.so requires it |
+| A or CNAME | `@` | your main site target | as needed |
+
+### 3. Cloudflare Redirect / Rewrite rule
+
+**Rules → Redirect Rules** (or **Bulk Redirects**):
+
+- If URL path starts with `/invest` → rewrite/proxy to  
+  `https://colorage.github.io/investor-dashboard-site/$1`
+
+Or use a **Worker** to proxy `/invest/*` → GitHub Pages (same idea as the old Vercel `vercel.json`).
+
+### 4. Dashboard repo
+
+Keep `vite.config.ts` `base: '/invest/'` (already set).
+
+**Result:** https://siaroza.com/invest/
+
+---
+
+## Option C — Redirect only (simple, URL changes)
+
+GoDaddy **Domain Forwarding** or Super.so redirect:
+
+`siaroza.com/invest` → `https://colorage.github.io/investor-dashboard-site/`
+
+Browser URL will **leave** siaroza.com (not ideal, but zero infra).
+
+---
+
+## Recommendation
+
+| Goal | Setup |
+|------|--------|
+| Minimal hassle | **Option A** — `invest.siaroza.com` + one GoDaddy CNAME |
+| Must use `/invest` path | **Option B** — Cloudflare in front of GoDaddy |
+| Quick test | Keep using https://colorage.github.io/investor-dashboard-site/ |
+
+After you pick A or B, the dashboard `base` path in Vite can be aligned and redeployed.
