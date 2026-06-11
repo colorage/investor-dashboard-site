@@ -22,8 +22,8 @@ export function renderFilters(state: FilterState): string {
         type="range"
         id="min-growth"
         class="filter-slider"
-        min="-50"
-        max="100"
+        min="20"
+        max="200"
         step="1"
         value="${state.minGrowth}"
       />
@@ -57,16 +57,6 @@ export function renderFilters(state: FilterState): string {
         ${GROWTH_PERIODS.map((p) => `<span>${p.label}</span>`).join("")}
       </div>
       <p class="filter-hint">Averages: ${periodLabels} (annualized)</p>
-    </div>
-    <div class="filter-row filter-row-checkbox">
-      <label class="filter-checkbox">
-        <input
-          type="checkbox"
-          id="positive-only"
-          ${state.positiveOnly ? "checked" : ""}
-        />
-        Positive growth only (from 3M)
-      </label>
     </div>`;
 }
 
@@ -80,7 +70,6 @@ export function attachFilterHandlers(
   const periodStartEl = container.querySelector("#period-start") as HTMLInputElement;
   const periodEndEl = container.querySelector("#period-end") as HTMLInputElement;
   const periodRangeValueEl = container.querySelector("#period-range-value");
-  const positiveOnlyEl = container.querySelector("#positive-only") as HTMLInputElement;
 
   function updateDualRangeVisual(): void {
     const start = Math.min(Number(periodStartEl.value), Number(periodEndEl.value));
@@ -114,7 +103,6 @@ export function attachFilterHandlers(
       minGrowth: Number(minGrowthEl.value),
       periodStart,
       periodEnd,
-      positiveOnly: positiveOnlyEl.checked,
     });
   }
 
@@ -134,6 +122,5 @@ export function attachFilterHandlers(
     emit();
   });
 
-  positiveOnlyEl.addEventListener("change", emit);
   updateDualRangeVisual();
 }

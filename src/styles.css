@@ -93,11 +93,6 @@ body {
   gap: 0.4rem;
 }
 
-.filter-row-checkbox {
-  flex-direction: row;
-  align-items: center;
-}
-
 .filter-label {
   font-size: 0.875rem;
   color: var(--text);
@@ -118,20 +113,6 @@ body {
   width: 100%;
   max-width: 400px;
   accent-color: var(--accent);
-}
-
-.filter-checkbox {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.875rem;
-  cursor: pointer;
-}
-
-.filter-checkbox input {
-  accent-color: var(--accent);
-  width: 1rem;
-  height: 1rem;
 }
 
 .dual-range {

@@ -18,14 +18,12 @@ export interface FilterState {
   minGrowth: number;
   periodStart: number;
   periodEnd: number;
-  positiveOnly: boolean;
 }
 
 export const DEFAULT_FILTER_STATE: FilterState = {
-  minGrowth: 0,
+  minGrowth: 20,
   periodStart: 0,
   periodEnd: GROWTH_PERIOD_COUNT - 1,
-  positiveOnly: false,
 };
 
 function periodsInRange(rangeStart: number, rangeEnd: number) {
@@ -51,24 +49,9 @@ export function computeAvgYearlyGrowth(
   return Math.round((sum / values.length) * 100) / 100;
 }
 
-export function passesPositiveGrowth(
-  row: SymbolRow,
-  rangeStart: number,
-  rangeEnd: number,
-): boolean {
-  for (const period of periodsInRange(rangeStart, rangeEnd)) {
-    const raw = row.returns[period.key as PeriodKey];
-    if (raw !== null && raw <= 0) return false;
-  }
-  return true;
-}
-
 export function passesGrowthFilters(row: SymbolRow, state: FilterState): boolean {
   const avg = computeAvgYearlyGrowth(row, state.periodStart, state.periodEnd);
   if (avg === null || avg < state.minGrowth) return false;
-  if (state.positiveOnly && !passesPositiveGrowth(row, state.periodStart, state.periodEnd)) {
-    return false;
-  }
   return true;
 }
 

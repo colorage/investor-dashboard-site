@@ -54,13 +54,11 @@ If your repo name differs from `investor-dashboard-site`, update `base` in [`vit
 
 ## Growth filters
 
-All symbols are shown in one table. Three filters control which rows appear:
+All symbols are shown in one table. Two filters control which rows appear:
 
-1. **Min avg yearly growth** — single slider (-50% to +100%). Shows symbols whose average annualized growth is at or above the threshold.
+1. **Min avg yearly growth** — single slider (20% to 200%). Shows symbols whose average annualized growth is at or above the threshold.
 
 2. **Period range** — dual slider over 3M, 6M, 1Y, 3Y, 5Y, 10Y. Defines which periods feed into the average.
-
-3. **Positive growth only (from 3M)** — when checked, every included period in the range must have a positive return.
 
 ### Annualization formula
 
