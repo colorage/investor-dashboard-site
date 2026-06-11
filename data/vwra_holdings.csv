@@ -1,0 +1,26 @@
+symbol,name,market,sector
+NVDA,NVIDIA Corp,us,Technology
+AAPL,Apple Inc,us,Technology
+MSFT,Microsoft Corp,us,Technology
+AMZN,Amazon.com Inc,us,Consumer Discretionary
+GOOGL,Alphabet Inc Class A,us,Technology
+GOOG,Alphabet Inc Class C,us,Technology
+AVGO,Broadcom Inc,us,Technology
+META,Meta Platforms Inc Class A,us,Technology
+TSLA,Tesla Inc,us,Consumer Discretionary
+2330.TW,Taiwan Semiconductor Manufacturing Co Ltd,tw,Technology
+LLY,Eli Lilly and Company,us,Health Care
+JPM,JPMorgan Chase and Co,us,Financials
+BRK-B,Berkshire Hathaway Inc,us,Financials
+XOM,Exxon Mobil Corporation,us,Energy
+ASML.AS,ASML Holding NV,eu,Technology
+JNJ,Johnson and Johnson,us,Health Care
+V,Visa Inc,us,Financials
+005930.KS,Samsung Electronics Co Ltd,kr,Technology
+WMT,Walmart Inc,us,Consumer Staples
+0700.HK,Tencent Holdings Ltd,hk,Communication Services
+MU,Micron Technology Inc,us,Technology
+MA,Mastercard Inc,us,Financials
+COST,Costco Wholesale Corporation,us,Consumer Staples
+ABBV,AbbVie Inc,us,Health Care
+9988.HK,Alibaba Group Holding Ltd,hk,Consumer Discretionary

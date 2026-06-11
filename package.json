@@ -1,0 +1,20 @@
+{
+  "name": "investor-dashboard-site",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build:universe": "tsx scripts/build-universe.ts",
+    "fetch:snapshot": "tsx scripts/fetch-snapshot.ts",
+    "fetch:snapshot:dev": "tsx scripts/fetch-snapshot.ts --dev",
+    "dev": "npm run build:universe && vite",
+    "build": "npm run build:universe && npm run fetch:snapshot && vite build",
+    "build:static": "npm run build:universe && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5"
+  }
+}
