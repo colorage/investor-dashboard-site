@@ -10,6 +10,7 @@
     "dev": "npm run build:universe && vite",
     "build": "npm run build:universe && npm run fetch:snapshot && vite build",
     "build:static": "npm run build:universe && vite build",
+    "deploy": "bash scripts/deploy-pages.sh",
     "preview": "vite preview"
   },
   "devDependencies": {
