@@ -1,12 +1,12 @@
-import { renderTable, renderTabs, SECTIONS, type SortState } from "./dashboard";
-import { PERIOD_KEYS } from "./returns";
+import { renderTable, type SortState } from "./dashboard";
 import {
-  DEV_SYMBOLS,
-  symbolsForSection,
-  type SectionId,
-  type Symbol,
-  type SymbolRow,
-} from "./universe";
+  attachFilterHandlers,
+  DEFAULT_FILTER_STATE,
+  renderFilters,
+  type FilterState,
+} from "./filters";
+import { PERIOD_KEYS } from "./returns";
+import { DEV_SYMBOLS, type Symbol, type SymbolRow } from "./universe";
 import { fetchSymbols, isProxyConfigured, type FetchProgress } from "./yahoo";
 import { clearCache, getAllCachedQuotes, getCacheAge } from "./cache";
 import "./styles.css";
@@ -15,16 +15,17 @@ const DEV_MODE = import.meta.env.DEV;
 
 let universe: Symbol[] = [];
 let rows: SymbolRow[] = [];
-let activeSection: SectionId = "all";
-let sortState: SortState = { key: "r_1y", dir: "desc" };
+let filterState: FilterState = { ...DEFAULT_FILTER_STATE };
+let sortState: SortState = { key: "avgGrowth", dir: "desc" };
 let isFetching = false;
 let failedSymbols = new Set<string>();
 let snapshotUpdatedAt: Date | null = null;
+let filtersInitialized = false;
 
 const statusEl = document.getElementById("status-text")!;
 const progressEl = document.getElementById("progress-text")!;
 const refreshBtn = document.getElementById("refresh-btn") as HTMLButtonElement;
-const tabsEl = document.getElementById("tabs")!;
+const filtersEl = document.getElementById("filters")!;
 const tableEl = document.getElementById("table-container")!;
 
 function emptyReturns() {
@@ -78,36 +79,25 @@ async function loadSnapshot(): Promise<Map<string, ReturnSnapshotLike> | null> {
   return map;
 }
 
-function getSection() {
-  return SECTIONS.find((s) => s.id === activeSection)!;
-}
-
-function updateSortForSection(): void {
-  const section = getSection();
-  sortState = {
-    key: section.defaultSort.key as SortState["key"],
-    dir: section.defaultSort.dir,
-  };
+function renderTableOnly(): void {
+  tableEl.innerHTML = renderTable(rows, sortState, filterState);
+  attachTableHandlers();
 }
 
 function render(): void {
-  tabsEl.innerHTML = renderTabs(activeSection);
-  const section = getSection();
-  const sectionRows = rows.filter((r) => section.filter(r));
-  tableEl.innerHTML = renderTable(sectionRows, section, sortState);
-  attachTableHandlers();
-  attachTabHandlers();
-}
-
-function attachTabHandlers(): void {
-  tabsEl.querySelectorAll(".tab").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      activeSection = (btn as HTMLElement).dataset.section as SectionId;
-      updateSortForSection();
-      render();
-      void prefetchLive();
-    });
-  });
+  if (!filtersInitialized) {
+    filtersEl.innerHTML = renderFilters(filterState);
+    attachFilterHandlers(
+      filtersEl,
+      (state) => {
+        filterState = state;
+        renderTableOnly();
+      },
+      () => filterState,
+    );
+    filtersInitialized = true;
+  }
+  renderTableOnly();
 }
 
 function attachTableHandlers(): void {
@@ -119,7 +109,7 @@ function attachTableHandlers(): void {
       } else {
         sortState = { key, dir: "desc" };
       }
-      render();
+      renderTableOnly();
     });
   });
 }
@@ -174,13 +164,11 @@ async function prefetchLive(force = false): Promise<void> {
   isFetching = true;
   refreshBtn.disabled = true;
 
-  const sectionSymbols = symbolsForSection(universe, activeSection).map((s) => s.symbol);
   const allSymbols = universe.map((s) => s.symbol);
 
   try {
     const { snapshots, failed } = await fetchSymbols(allSymbols, {
       force,
-      prioritySymbols: sectionSymbols,
       onProgress: async (p) => {
         setProgress(p);
         failedSymbols = new Set(p.failed);
@@ -190,7 +178,7 @@ async function prefetchLive(force = false): Promise<void> {
           snapMap.set(sym, quote.snapshot);
         }
         rows = buildRows(snapMap);
-        render();
+        renderTableOnly();
       },
     });
     await applySnapshots(snapshots, failed, "live");
@@ -234,7 +222,6 @@ async function main(): Promise<void> {
 
   try {
     await loadUniverse();
-    updateSortForSection();
     render();
 
     const snapshot = await loadSnapshot();
@@ -245,12 +232,8 @@ async function main(): Promise<void> {
     }
 
     if (isProxyConfigured()) {
-      const hadCache = await initFromCache();
-      if (hadCache) {
-        void prefetchLive(false);
-      } else {
-        void prefetchLive(false);
-      }
+      await initFromCache();
+      void prefetchLive(false);
     }
   } catch (err) {
     setStatus(err instanceof Error ? err.message : "Failed to initialize");
