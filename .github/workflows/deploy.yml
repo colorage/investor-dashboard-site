@@ -40,7 +40,7 @@ jobs:
       - name: Build site
         env:
           VITE_YAHOO_PROXY_URL: ${{ secrets.VITE_YAHOO_PROXY_URL }}
-        run: vite build
+        run: npx vite build
 
       - uses: actions/upload-pages-artifact@v3
         with:
