@@ -2,11 +2,11 @@
 
 Single-page dashboard hosted on GitHub Pages. Compare stocks and ETFs by multi-period returns (1D through 10Y), mirroring the [invester-dashboard](https://github.com/colorage/invester-dashboard) Obsidian vault.
 
-## Data sources
+## Data updates
 
-The dashboard loads **pre-fetched market data** from `snapshot.json`, built during deploy by a Node script that calls Yahoo Finance server-side (no CORS issues). GitHub Actions runs this on every push (~25–35 min for the full universe).
+Market data is fetched **on GitHub Actions** during each deploy (~25–35 min for the full universe). No local machine or CORS proxy required.
 
-Optional: set `VITE_YAHOO_PROXY_URL` to a [Cloudflare Worker](proxy/worker.ts) for live in-browser refresh.
+Automatic refresh: **weekdays at 06:00 UTC** (GitHub-hosted cron). Also runs on every push to `main`, or manually via Actions → Run workflow.
 
 ## Live demo
 
