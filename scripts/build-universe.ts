@@ -174,6 +174,7 @@ function main(): void {
     ...loadEtfs(),
     ...loadCsvSymbols("ucits_etfs.csv", "etf", "eu", { withExchange: true }),
     ...loadCsvSymbols("extra_us_etfs.csv", "etf", "us"),
+    ...loadCsvSymbols("extra_us_stocks.csv", "stock", "us"),
     ...loadCsvSymbols("eu_stocks.csv", "stock", "eu"),
     ...loadCsvSymbols("pl_wig20.csv", "stock", "pl"),
     ...loadCsvSymbols("vwra_holdings.csv", "stock", "us", { marketFromCsv: true }),

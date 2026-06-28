@@ -3937,6 +3937,69 @@
     "exchange": "XETRA"
   },
   {
+    "symbol": "SGLN.L",
+    "name": "iShares Physical Gold ETC",
+    "type": "etf",
+    "market": "eu",
+    "exchange": "LSE"
+  },
+  {
+    "symbol": "CNDX.L",
+    "name": "iShares NASDAQ 100 UCITS ETF",
+    "type": "etf",
+    "market": "eu",
+    "exchange": "LSE"
+  },
+  {
+    "symbol": "VUAG.L",
+    "name": "Vanguard S&P 500 UCITS ETF",
+    "type": "etf",
+    "market": "eu",
+    "exchange": "LSE"
+  },
+  {
+    "symbol": "VWRL.L",
+    "name": "Vanguard FTSE All-World UCITS ETF",
+    "type": "etf",
+    "market": "eu",
+    "exchange": "LSE"
+  },
+  {
+    "symbol": "SUSW.L",
+    "name": "iShares MSCI World SRI UCITS ETF",
+    "type": "etf",
+    "market": "eu",
+    "exchange": "LSE"
+  },
+  {
+    "symbol": "IDTL.L",
+    "name": "iShares $ Treasury Bond 7-10yr UCITS ETF",
+    "type": "etf",
+    "market": "eu",
+    "exchange": "LSE"
+  },
+  {
+    "symbol": "IBTA.L",
+    "name": "iShares $ TIPS UCITS ETF",
+    "type": "etf",
+    "market": "eu",
+    "exchange": "LSE"
+  },
+  {
+    "symbol": "EXS1.DE",
+    "name": "iShares Core DAX UCITS ETF",
+    "type": "etf",
+    "market": "eu",
+    "exchange": "XETRA"
+  },
+  {
+    "symbol": "EXW1.DE",
+    "name": "iShares Core CAC 40 UCITS ETF",
+    "type": "etf",
+    "market": "eu",
+    "exchange": "XETRA"
+  },
+  {
     "symbol": "IBIT",
     "name": "iShares Bitcoin Trust ETF",
     "type": "etf",
@@ -4013,6 +4076,203 @@
     "name": "Global X Uranium ETF",
     "type": "etf",
     "market": "us"
+  },
+  {
+    "symbol": "VGT",
+    "name": "Vanguard Information Technology ETF",
+    "type": "etf",
+    "market": "us"
+  },
+  {
+    "symbol": "ITOT",
+    "name": "iShares Core S&P Total US Stock Market ETF",
+    "type": "etf",
+    "market": "us"
+  },
+  {
+    "symbol": "SCHX",
+    "name": "Schwab US Large-Cap ETF",
+    "type": "etf",
+    "market": "us"
+  },
+  {
+    "symbol": "SCHB",
+    "name": "Schwab US Broad Market ETF",
+    "type": "etf",
+    "market": "us"
+  },
+  {
+    "symbol": "SCHF",
+    "name": "Schwab International Equity ETF",
+    "type": "etf",
+    "market": "us"
+  },
+  {
+    "symbol": "VYM",
+    "name": "Vanguard High Dividend Yield ETF",
+    "type": "etf",
+    "market": "us"
+  },
+  {
+    "symbol": "DVY",
+    "name": "iShares Select Dividend ETF",
+    "type": "etf",
+    "market": "us"
+  },
+  {
+    "symbol": "MTUM",
+    "name": "iShares MSCI USA Momentum Factor ETF",
+    "type": "etf",
+    "market": "us"
+  },
+  {
+    "symbol": "QUAL",
+    "name": "iShares MSCI USA Quality Factor ETF",
+    "type": "etf",
+    "market": "us"
+  },
+  {
+    "symbol": "XBI",
+    "name": "SPDR S&P Biotech ETF",
+    "type": "etf",
+    "market": "us"
+  },
+  {
+    "symbol": "KWEB",
+    "name": "KraneShares CSI China Internet ETF",
+    "type": "etf",
+    "market": "us"
+  },
+  {
+    "symbol": "TIP",
+    "name": "iShares TIPS Bond ETF",
+    "type": "etf",
+    "market": "us"
+  },
+  {
+    "symbol": "MBB",
+    "name": "iShares MBS ETF",
+    "type": "etf",
+    "market": "us"
+  },
+  {
+    "symbol": "MUB",
+    "name": "iShares National Muni Bond ETF",
+    "type": "etf",
+    "market": "us"
+  },
+  {
+    "symbol": "ETHA",
+    "name": "iShares Ethereum Trust ETF",
+    "type": "etf",
+    "market": "us"
+  },
+  {
+    "symbol": "JEPI",
+    "name": "JPMorgan Equity Premium Income ETF",
+    "type": "etf",
+    "market": "us"
+  },
+  {
+    "symbol": "JEPQ",
+    "name": "JPMorgan NASDAQ Equity Premium Income ETF",
+    "type": "etf",
+    "market": "us"
+  },
+  {
+    "symbol": "CIBR",
+    "name": "First Trust NASDAQ Cybersecurity ETF",
+    "type": "etf",
+    "market": "us"
+  },
+  {
+    "symbol": "BOTZ",
+    "name": "Global X Robotics & Artificial Intelligence ETF",
+    "type": "etf",
+    "market": "us"
+  },
+  {
+    "symbol": "SCHH",
+    "name": "Schwab US REIT ETF",
+    "type": "etf",
+    "market": "us"
+  },
+  {
+    "symbol": "ARM",
+    "name": "Arm Holdings PLC",
+    "type": "stock",
+    "market": "us",
+    "sector": "Technology"
+  },
+  {
+    "symbol": "SNOW",
+    "name": "Snowflake Inc",
+    "type": "stock",
+    "market": "us",
+    "sector": "Technology"
+  },
+  {
+    "symbol": "CRSP",
+    "name": "CRISPR Therapeutics AG",
+    "type": "stock",
+    "market": "us",
+    "sector": "Health Care"
+  },
+  {
+    "symbol": "RIVN",
+    "name": "Rivian Automotive Inc",
+    "type": "stock",
+    "market": "us",
+    "sector": "Consumer Discretionary"
+  },
+  {
+    "symbol": "LCID",
+    "name": "Lucid Group Inc",
+    "type": "stock",
+    "market": "us",
+    "sector": "Consumer Discretionary"
+  },
+  {
+    "symbol": "MSTR",
+    "name": "MicroStrategy Inc",
+    "type": "stock",
+    "market": "us",
+    "sector": "Technology"
+  },
+  {
+    "symbol": "MARA",
+    "name": "MARA Holdings Inc",
+    "type": "stock",
+    "market": "us",
+    "sector": "Technology"
+  },
+  {
+    "symbol": "SHOP",
+    "name": "Shopify Inc",
+    "type": "stock",
+    "market": "us",
+    "sector": "Consumer Discretionary"
+  },
+  {
+    "symbol": "SE",
+    "name": "Sea Ltd",
+    "type": "stock",
+    "market": "us",
+    "sector": "Consumer Discretionary"
+  },
+  {
+    "symbol": "MELI",
+    "name": "MercadoLibre Inc",
+    "type": "stock",
+    "market": "us",
+    "sector": "Consumer Discretionary"
+  },
+  {
+    "symbol": "NU",
+    "name": "Nu Holdings Ltd",
+    "type": "stock",
+    "market": "us",
+    "sector": "Financials"
   },
   {
     "symbol": "ASML.AS",
@@ -4119,6 +4379,97 @@
     "type": "stock",
     "market": "eu",
     "sector": "Energy"
+  },
+  {
+    "symbol": "BNP.PA",
+    "name": "BNP Paribas SA",
+    "type": "stock",
+    "market": "eu",
+    "sector": "Financials"
+  },
+  {
+    "symbol": "TTE.PA",
+    "name": "TotalEnergies SE",
+    "type": "stock",
+    "market": "eu",
+    "sector": "Energy"
+  },
+  {
+    "symbol": "AZN.L",
+    "name": "AstraZeneca PLC",
+    "type": "stock",
+    "market": "eu",
+    "sector": "Health Care"
+  },
+  {
+    "symbol": "ULVR.L",
+    "name": "Unilever PLC",
+    "type": "stock",
+    "market": "eu",
+    "sector": "Consumer Staples"
+  },
+  {
+    "symbol": "BP.L",
+    "name": "BP PLC",
+    "type": "stock",
+    "market": "eu",
+    "sector": "Energy"
+  },
+  {
+    "symbol": "DBK.DE",
+    "name": "Deutsche Bank AG",
+    "type": "stock",
+    "market": "eu",
+    "sector": "Financials"
+  },
+  {
+    "symbol": "ALV.DE",
+    "name": "Allianz SE",
+    "type": "stock",
+    "market": "eu",
+    "sector": "Financials"
+  },
+  {
+    "symbol": "ENR.DE",
+    "name": "Siemens Energy AG",
+    "type": "stock",
+    "market": "eu",
+    "sector": "Industrials"
+  },
+  {
+    "symbol": "ADYEN.AS",
+    "name": "Adyen NV",
+    "type": "stock",
+    "market": "eu",
+    "sector": "Technology"
+  },
+  {
+    "symbol": "ENEL.MI",
+    "name": "Enel SpA",
+    "type": "stock",
+    "market": "eu",
+    "sector": "Utilities"
+  },
+  {
+    "symbol": "UCG.MI",
+    "name": "UniCredit SpA",
+    "type": "stock",
+    "market": "eu",
+    "sector": "Financials"
+  },
+  {
+    "symbol": "NOVN.SW",
+    "name": "Novartis AG",
+    "type": "stock",
+    "market": "eu",
+    "sector": "Health Care"
+  },
+  {
+    "symbol": "ABBN.SW",
+    "name": "ABB Ltd",
+    "type": "stock",
+    "market": "eu",
+    "sector": "Industrials"
   },
   {
     "symbol": "PKN.WA",
@@ -4290,6 +4641,62 @@
     "type": "stock",
     "market": "hk",
     "sector": "Consumer Discretionary",
+    "vwraHolding": true
+  },
+  {
+    "symbol": "7203.T",
+    "name": "Toyota Motor Corp",
+    "type": "stock",
+    "market": "jp",
+    "sector": "Consumer Discretionary",
+    "vwraHolding": true
+  },
+  {
+    "symbol": "6758.T",
+    "name": "Sony Group Corp",
+    "type": "stock",
+    "market": "jp",
+    "sector": "Consumer Discretionary",
+    "vwraHolding": true
+  },
+  {
+    "symbol": "RY.TO",
+    "name": "Royal Bank of Canada",
+    "type": "stock",
+    "market": "ca",
+    "sector": "Financials",
+    "vwraHolding": true
+  },
+  {
+    "symbol": "TD.TO",
+    "name": "Toronto-Dominion Bank",
+    "type": "stock",
+    "market": "ca",
+    "sector": "Financials",
+    "vwraHolding": true
+  },
+  {
+    "symbol": "BHP.AX",
+    "name": "BHP Group Ltd",
+    "type": "stock",
+    "market": "au",
+    "sector": "Materials",
+    "vwraHolding": true
+  },
+  {
+    "symbol": "1211.HK",
+    "name": "BYD Co Ltd",
+    "type": "stock",
+    "market": "hk",
+    "sector": "Consumer Discretionary",
+    "vwraHolding": true
+  },
+  {
+    "symbol": "1810.HK",
+    "name": "Xiaomi Corp",
+    "type": "stock",
+    "market": "hk",
+    "sector": "Technology",
     "vwraHolding": true
   }
 ]
