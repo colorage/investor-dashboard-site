@@ -1,4 +1,4 @@
-import type { PeriodKey } from "./returns";
+import type { HistorySeries, PeriodKey } from "./returns";
 
 export interface Symbol {
   symbol: string;
@@ -13,6 +13,7 @@ export interface Symbol {
 export interface SymbolRow extends Symbol {
   price: number | null;
   returns: Record<PeriodKey, number | null>;
+  history?: HistorySeries;
   failed?: boolean;
 }
 

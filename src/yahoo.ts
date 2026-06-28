@@ -1,4 +1,4 @@
-import { computeReturns, type PricePoint, type ReturnSnapshot } from "./returns";
+import { computeSnapshot, type PricePoint, type ReturnSnapshot } from "./returns";
 import {
   getAllCachedQuotes,
   getCachedQuote,
@@ -99,7 +99,7 @@ export async function fetchSymbolSnapshot(
 
   try {
     const history = await fetchSymbolHistory(symbol);
-    const snapshot = computeReturns(history);
+    const snapshot = computeSnapshot(history);
     await setCachedQuote(symbol, snapshot);
     return snapshot;
   } catch {
@@ -142,7 +142,7 @@ export async function fetchSymbols(
       chunk.map(async (symbol) => {
         try {
           const history = await fetchSymbolHistory(symbol);
-          const snapshot = computeReturns(history);
+          const snapshot = computeSnapshot(history);
           snapshots.set(symbol, snapshot);
           await setCachedQuote(symbol, snapshot);
         } catch {

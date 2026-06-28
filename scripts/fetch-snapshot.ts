@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { computeReturns, type PricePoint, type ReturnSnapshot } from "../src/returns";
+import { computeSnapshot, type PricePoint, type ReturnSnapshot } from "../src/returns";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const UNIVERSE_PATH = join(ROOT, "public", "universe.json");
@@ -74,7 +74,7 @@ async function fetchSymbol(symbol: string): Promise<ReturnSnapshot> {
   }
   const history = parseChart(data);
   if (history.length === 0) throw new Error("No history");
-  return computeReturns(history);
+  return computeSnapshot(history);
 }
 
 async function main(): Promise<void> {

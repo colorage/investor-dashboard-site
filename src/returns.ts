@@ -26,14 +26,70 @@ export const PERIOD_LABELS: Record<PeriodKey, string> = {
   r_10y: "10Y",
 };
 
+export interface HistorySeries {
+  start: number;
+  c: number[];
+}
+
 export interface ReturnSnapshot {
   price: number | null;
   returns: Record<PeriodKey, number | null>;
+  history?: HistorySeries;
 }
 
 export interface PricePoint {
   date: Date;
   close: number;
+}
+
+const WEEK_MS = 7 * 86400000;
+
+function roundClose(value: number): number {
+  if (value === 0) return 0;
+  const magnitude = Math.pow(10, Math.floor(Math.log10(Math.abs(value))) - 3);
+  return Math.round(value / magnitude) * magnitude;
+}
+
+export function downsampleWeekly(history: PricePoint[]): HistorySeries | null {
+  const series = [...history]
+    .filter((p) => Number.isFinite(p.close))
+    .sort((a, b) => a.date.getTime() - b.date.getTime());
+
+  if (series.length === 0) return null;
+
+  const start = series[0].date.getTime();
+  const end = series[series.length - 1].date.getTime();
+  const closes: number[] = [];
+  let pointIdx = 0;
+  let lastClose = series[0].close;
+
+  for (let weekStart = start; weekStart <= end; weekStart += WEEK_MS) {
+    const weekEnd = weekStart + WEEK_MS - 1;
+    while (
+      pointIdx + 1 < series.length &&
+      series[pointIdx + 1].date.getTime() <= weekEnd
+    ) {
+      pointIdx++;
+    }
+    if (series[pointIdx].date.getTime() <= weekEnd) {
+      lastClose = series[pointIdx].close;
+    }
+    closes.push(roundClose(lastClose));
+  }
+
+  return closes.length > 0 ? { start, c: closes } : null;
+}
+
+export function computeSnapshot(
+  history: PricePoint[],
+  asOf: Date = new Date(),
+): ReturnSnapshot {
+  const snapshot = computeReturns(history, asOf);
+  const weekly = downsampleWeekly(history);
+  if (weekly) {
+    snapshot.history = weekly;
+  }
+  return snapshot;
 }
 
 function pctReturn(current: number, past: number): number | null {

@@ -82,6 +82,7 @@ export function renderTable(
   rows: SymbolRow[],
   sort: SortState,
   filterState: FilterState,
+  expandedSymbol: string | null = null,
 ): string {
   const displayRows = sortRows(
     rows.filter((r) => !r.failed && passesGrowthFilters(r, filterState)),
@@ -117,7 +118,12 @@ export function renderTable(
         ? `<td class="crown" title="${crownTitle}" aria-label="${crownTitle}">👑</td>`
         : '<td class="crown"></td>';
 
-      return `<tr>
+      const isExpanded = expandedSymbol === row.symbol;
+      const caretClass = isExpanded ? "caret open" : "caret";
+      const rowClass = isExpanded ? "row-main expanded" : "row-main";
+
+      const mainRow = `<tr class="${rowClass}" data-symbol="${escapeHtml(row.symbol)}">
+        <td class="${caretClass}" aria-hidden="true">▸</td>
         ${crown}
         <td class="sym">${escapeHtml(row.symbol)}</td>
         <td class="name">${escapeHtml(row.name)}</td>
@@ -125,6 +131,15 @@ export function renderTable(
         <td class="price">${price}</td>
         <td class="${returnClass(avgGrowth)}">${formatReturn(avgGrowth)}</td>
         ${returns}
+      </tr>`;
+
+      if (!isExpanded) return mainRow;
+
+      return `${mainRow}
+      <tr class="row-detail" data-symbol="${escapeHtml(row.symbol)}">
+        <td colspan="22">
+          <div class="chart-wrap" aria-label="Price chart for ${escapeHtml(row.symbol)}"></div>
+        </td>
       </tr>`;
     })
     .join("");
@@ -134,6 +149,7 @@ export function renderTable(
       <table>
         <thead>
           <tr>
+            <th class="caret-col" aria-hidden="true"></th>
             <th class="crown" title="${crownTitle}" aria-label="Crown: meets growth in all periods">👑</th>
             ${th("Symbol", "symbol", sort)}
             ${th("Name", "name", sort)}
@@ -143,7 +159,7 @@ export function renderTable(
             ${returnHeaders}
           </tr>
         </thead>
-        <tbody>${body || '<tr><td colspan="21" class="empty">No symbols match filters</td></tr>'}</tbody>
+        <tbody>${body || '<tr><td colspan="22" class="empty">No symbols match filters</td></tr>'}</tbody>
       </table>
     </div>`;
 }

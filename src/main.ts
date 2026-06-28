@@ -1,11 +1,12 @@
 import { renderTable, type SortState } from "./dashboard";
+import { renderLineChart } from "./chart";
 import {
   attachFilterHandlers,
   DEFAULT_FILTER_STATE,
   renderFilters,
   type FilterState,
 } from "./filters";
-import { PERIOD_KEYS } from "./returns";
+import { PERIOD_KEYS, type HistorySeries } from "./returns";
 import { DEV_SYMBOLS, type Symbol, type SymbolRow } from "./universe";
 import { fetchSymbols, isProxyConfigured, type FetchProgress } from "./yahoo";
 import { clearCache, getAllCachedQuotes, getCacheAge } from "./cache";
@@ -21,6 +22,7 @@ let isFetching = false;
 let failedSymbols = new Set<string>();
 let snapshotUpdatedAt: Date | null = null;
 let filtersInitialized = false;
+let expandedSymbol: string | null = null;
 
 const statusEl = document.getElementById("status-text")!;
 const progressEl = document.getElementById("progress-text")!;
@@ -39,6 +41,7 @@ function buildRows(snapshots: Map<string, ReturnSnapshotLike>): SymbolRow[] {
       ...sym,
       price: snap?.price ?? null,
       returns: snap?.returns ?? emptyReturns(),
+      history: snap?.history,
       failed: failedSymbols.has(sym.symbol),
     };
   });
@@ -47,6 +50,7 @@ function buildRows(snapshots: Map<string, ReturnSnapshotLike>): SymbolRow[] {
 interface ReturnSnapshotLike {
   price: number | null;
   returns: SymbolRow["returns"];
+  history?: HistorySeries;
 }
 
 interface SnapshotFile {
@@ -80,7 +84,7 @@ async function loadSnapshot(): Promise<Map<string, ReturnSnapshotLike> | null> {
 }
 
 function renderTableOnly(): void {
-  tableEl.innerHTML = renderTable(rows, sortState, filterState);
+  tableEl.innerHTML = renderTable(rows, sortState, filterState, expandedSymbol);
   attachTableHandlers();
 }
 
@@ -91,6 +95,7 @@ function render(): void {
       filtersEl,
       (state) => {
         filterState = state;
+        expandedSymbol = null;
         renderTableOnly();
       },
       () => filterState,
@@ -102,14 +107,51 @@ function render(): void {
 
 function attachTableHandlers(): void {
   tableEl.querySelectorAll("th.sortable").forEach((th) => {
-    th.addEventListener("click", () => {
+    th.addEventListener("click", (event) => {
+      event.stopPropagation();
       const key = (th as HTMLElement).dataset.sort as SortState["key"];
       if (sortState.key === key) {
         sortState = { key, dir: sortState.dir === "asc" ? "desc" : "asc" };
       } else {
         sortState = { key, dir: "desc" };
       }
+      expandedSymbol = null;
       renderTableOnly();
+    });
+  });
+
+  tableEl.querySelectorAll("tr.row-main").forEach((tr) => {
+    tr.addEventListener("click", () => {
+      const symbol = (tr as HTMLElement).dataset.symbol;
+      if (!symbol) return;
+
+      if (expandedSymbol === symbol) {
+        expandedSymbol = null;
+        renderTableOnly();
+        return;
+      }
+
+      expandedSymbol = symbol;
+      renderTableOnly();
+
+      const detailRow = tableEl.querySelector(
+        `tr.row-detail[data-symbol="${symbol}"]`,
+      );
+      if (!detailRow) return;
+
+      const chartWrap = detailRow.querySelector(".chart-wrap") as HTMLElement | null;
+      if (!chartWrap) return;
+
+      const row = rows.find((r) => r.symbol === symbol);
+      if (!row?.history) {
+        chartWrap.innerHTML = '<p class="chart-empty">No chart data</p>';
+        return;
+      }
+
+      renderLineChart(chartWrap, row.history, {
+        symbol: row.symbol,
+        name: row.name,
+      });
     });
   });
 }
