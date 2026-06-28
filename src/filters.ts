@@ -2,6 +2,8 @@ import {
   DEFAULT_FILTER_STATE,
   GROWTH_PERIOD_COUNT,
   GROWTH_PERIODS,
+  GROWTH_RANGE_MAX,
+  GROWTH_RANGE_MIN,
   periodRangeLabel,
   type FilterState,
 } from "./growth";
@@ -15,18 +17,31 @@ export function renderFilters(state: FilterState): string {
 
   return `
     <div class="filter-row">
-      <label class="filter-label" for="min-growth">
-        Min avg yearly growth: <span id="min-growth-value">${state.minGrowth}%</span>
+      <label class="filter-label">
+        Avg yearly growth:
+        <span id="growth-range-value">${state.minGrowth}% – ${state.maxGrowth}%</span>
       </label>
-      <input
-        type="range"
-        id="min-growth"
-        class="filter-slider"
-        min="20"
-        max="200"
-        step="1"
-        value="${state.minGrowth}"
-      />
+      <div class="dual-range">
+        <div class="dual-range-track" id="growth-track"></div>
+        <input
+          type="range"
+          id="min-growth"
+          class="dual-range-input"
+          min="${GROWTH_RANGE_MIN}"
+          max="${GROWTH_RANGE_MAX}"
+          step="1"
+          value="${state.minGrowth}"
+        />
+        <input
+          type="range"
+          id="max-growth"
+          class="dual-range-input"
+          min="${GROWTH_RANGE_MIN}"
+          max="${GROWTH_RANGE_MAX}"
+          step="1"
+          value="${state.maxGrowth}"
+        />
+      </div>
     </div>
     <div class="filter-row">
       <label class="filter-label">
@@ -66,12 +81,14 @@ export function attachFilterHandlers(
   getState: () => FilterState,
 ): void {
   const minGrowthEl = container.querySelector("#min-growth") as HTMLInputElement;
-  const minGrowthValueEl = container.querySelector("#min-growth-value");
+  const maxGrowthEl = container.querySelector("#max-growth") as HTMLInputElement;
+  const growthRangeValueEl = container.querySelector("#growth-range-value");
+  const growthTrackEl = container.querySelector("#growth-track") as HTMLElement;
   const periodStartEl = container.querySelector("#period-start") as HTMLInputElement;
   const periodEndEl = container.querySelector("#period-end") as HTMLInputElement;
   const periodRangeValueEl = container.querySelector("#period-range-value");
 
-  function updateDualRangeVisual(): void {
+  function updatePeriodRangeVisual(): void {
     const start = Math.min(Number(periodStartEl.value), Number(periodEndEl.value));
     const end = Math.max(Number(periodStartEl.value), Number(periodEndEl.value));
     const track = container.querySelector(".dual-range-track") as HTMLElement;
@@ -83,6 +100,17 @@ export function attachFilterHandlers(
     track.style.width = `${width}%`;
   }
 
+  function updateGrowthRangeVisual(): void {
+    if (!growthTrackEl) return;
+    const min = Math.min(Number(minGrowthEl.value), Number(maxGrowthEl.value));
+    const max = Math.max(Number(minGrowthEl.value), Number(maxGrowthEl.value));
+    const span = GROWTH_RANGE_MAX - GROWTH_RANGE_MIN;
+    const left = ((min - GROWTH_RANGE_MIN) / span) * 100;
+    const width = ((max - min) / span) * 100;
+    growthTrackEl.style.left = `${left}%`;
+    growthTrackEl.style.width = `${width}%`;
+  }
+
   function emit(): void {
     let periodStart = Number(periodStartEl.value);
     let periodEnd = Number(periodEndEl.value);
@@ -91,22 +119,45 @@ export function attachFilterHandlers(
       periodStartEl.value = String(periodStart);
       periodEndEl.value = String(periodEnd);
     }
-    updateDualRangeVisual();
-    if (minGrowthValueEl) {
-      minGrowthValueEl.textContent = `${minGrowthEl.value}%`;
+
+    let minGrowth = Number(minGrowthEl.value);
+    let maxGrowth = Number(maxGrowthEl.value);
+    if (minGrowth > maxGrowth) {
+      [minGrowth, maxGrowth] = [maxGrowth, minGrowth];
+      minGrowthEl.value = String(minGrowth);
+      maxGrowthEl.value = String(maxGrowth);
+    }
+
+    updatePeriodRangeVisual();
+    updateGrowthRangeVisual();
+    if (growthRangeValueEl) {
+      growthRangeValueEl.textContent = `${minGrowth}% – ${maxGrowth}%`;
     }
     if (periodRangeValueEl) {
       periodRangeValueEl.textContent = periodRangeLabel(periodStart, periodEnd);
     }
     onChange({
       ...getState(),
-      minGrowth: Number(minGrowthEl.value),
+      minGrowth,
+      maxGrowth,
       periodStart,
       periodEnd,
     });
   }
 
-  minGrowthEl.addEventListener("input", emit);
+  minGrowthEl.addEventListener("input", () => {
+    if (Number(minGrowthEl.value) > Number(maxGrowthEl.value)) {
+      maxGrowthEl.value = minGrowthEl.value;
+    }
+    emit();
+  });
+
+  maxGrowthEl.addEventListener("input", () => {
+    if (Number(maxGrowthEl.value) < Number(minGrowthEl.value)) {
+      minGrowthEl.value = maxGrowthEl.value;
+    }
+    emit();
+  });
 
   periodStartEl.addEventListener("input", () => {
     if (Number(periodStartEl.value) > Number(periodEndEl.value)) {
@@ -122,5 +173,6 @@ export function attachFilterHandlers(
     emit();
   });
 
-  updateDualRangeVisual();
+  updatePeriodRangeVisual();
+  updateGrowthRangeVisual();
 }
