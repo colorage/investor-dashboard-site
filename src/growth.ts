@@ -19,14 +19,12 @@ export const GROWTH_RANGE_MAX = 200;
 
 export interface FilterState {
   minGrowth: number;
-  maxGrowth: number;
   periodStart: number;
   periodEnd: number;
 }
 
 export const DEFAULT_FILTER_STATE: FilterState = {
   minGrowth: GROWTH_RANGE_MIN,
-  maxGrowth: GROWTH_RANGE_MAX,
   periodStart: 0,
   periodEnd: GROWTH_PERIOD_COUNT - 1,
 };
@@ -56,7 +54,7 @@ export function computeAvgYearlyGrowth(
 
 export function passesGrowthFilters(row: SymbolRow, state: FilterState): boolean {
   const avg = computeAvgYearlyGrowth(row, state.periodStart, state.periodEnd);
-  if (avg === null || avg < state.minGrowth || avg > state.maxGrowth) return false;
+  if (avg === null || avg < state.minGrowth) return false;
   return true;
 }
 
@@ -64,8 +62,7 @@ export function hasCrownBadge(row: SymbolRow, state: FilterState): boolean {
   for (const period of periodsInRange(state.periodStart, state.periodEnd)) {
     const raw = row.returns[period.key as PeriodKey];
     if (raw === null) return false;
-    const annualized = period.annualize(raw);
-    if (annualized < state.minGrowth || annualized > state.maxGrowth) return false;
+    if (period.annualize(raw) < state.minGrowth) return false;
   }
   return true;
 }
@@ -78,5 +75,5 @@ export function periodRangeLabel(rangeStart: number, rangeEnd: number): string {
 
 export function crownBadgeDescription(state: FilterState): string {
   const range = periodRangeLabel(state.periodStart, state.periodEnd);
-  return `Annualized growth ${state.minGrowth}%–${state.maxGrowth}% in every period (${range})`;
+  return `Annualized growth ≥ ${state.minGrowth}% in every period (${range})`;
 }
